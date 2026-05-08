@@ -175,18 +175,20 @@ function buildCard(item) {
       <div class="card-body p-2">
         <div class="d-flex justify-content-between align-items-start">
           <div class="text-left" style="flex:1; min-width:0;">
-            <h6 class="mb-1 text-info font-weight-bold" style="font-size:0.95rem;">${item.alreadyTransferred ? '<span class="fas fa-circle text-success mr-1" style="font-size:0.45rem;vertical-align:0.2em;" title="Transferencia registrada (SAP)"></span>' : ''}${item.sapMaterial}</h6>
+            <h6 class="mb-1 ${item.alreadyTransferred ? 'text-success' : 'text-info'} font-weight-bold" style="font-size:0.95rem;">${item.alreadyTransferred ? '<span class="fas fa-circle text-success mr-1" style="font-size:0.45rem;vertical-align:0.2em;" title="Transferencia registrada (SAP)"></span>' : ''}${item.sapMaterial}</h6>
             <p class="mb-1" style="font-size:0.8rem;">
               <span class="fas fa-industry mr-1 text-muted"></span>${item.stationName}
             </p>
             <p class="mb-0 text-muted" style="font-size:0.75rem;">${item.materialDescription || ""}</p>
           </div>
           <div class="text-right" style="white-space:nowrap;">
-            <span class="badge badge-info" style="font-size:1rem;">${item.quantity}</span>
-            <p class="mb-0 mt-1 text-muted" style="font-size:0.7rem;">
+            <span class="badge ${item.alreadyTransferred ? 'badge-success' : 'badge-info'}" style="font-size:1rem;">${item.quantity}</span>
+            ${item.alreadyTransferred
+              ? `<p class="mb-0 mt-1" style="font-size:0.7rem;"><span class="fas fa-check-circle text-success" style="font-size:1rem;" title="Transferencia registrada (SAP)"></span></p>`
+              : `<p class="mb-0 mt-1 text-muted" style="font-size:0.7rem;">
               <span class="fas fa-stopwatch mr-1"></span>
               <span class="font-weight-bold" data-request-time="${requestMs}">--:--:--</span>
-            </p>
+            </p>`}
           </div>
         </div>
       </div>

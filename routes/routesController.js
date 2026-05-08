@@ -231,6 +231,74 @@ controller.transferSEM_GET = (req, res) => {
     })
 }
 
+controller.transferSEMFifo_GET = (req, res) => {
+    let estacion = req.res.locals.macIP.mac
+    let user_id = req.res.locals.authData.id.id
+    let user_name = req.res.locals.authData.id.username
+    res.render('transfer_sem_fifo.ejs', {
+        user_id,
+        user_name,
+        estacion
+    })
+}
+
+controller.getTransferFifoList_POST = (req, res) => {
+    axios({
+        method: 'get',
+        url: `http://${process.env.API_ADDRESS}:5000/SEMgetTransferFifoList`,
+        headers: { 'Content-Type': 'application/json' }
+    })
+        .then(result => { res.send(result.data) })
+        .catch(err => { res.json(JSON.stringify(err)) })
+}
+
+controller.getSEMFIFO_POST = (req, res) => {
+    let material = req.body.material
+    let user_id = req.body.user_id
+    let storage_type = req.body.storage_type
+    let estacion = req.body.estacion
+
+    let send = `{
+        "material":"${material}",
+        "user_id":"${user_id}",
+        "storage_type":"${storage_type}",
+        "estacion":"${estacion}"
+    }`
+
+    axios({
+        method: 'post',
+        url: `http://${process.env.API_ADDRESS}:5000/getSEMFIFO`,
+        headers: { 'Content-Type': 'application/json' },
+        data: send
+    })
+        .then(result => { res.send(result.data) })
+        .catch(err => { res.json(JSON.stringify(err)) })
+}
+
+controller.transferSEM_FIFO_POST = (req, res) => {
+    let send = {
+        station: req.res.locals.macIP.mac,
+        estacion: req.body.estacion,
+        user_id: req.body.user_id,
+        serial: req.body.serial,
+        storage_type: req.body.storage_type,
+        serials_obsoletos: req.body.serials_obsoletos,
+        proceso: req.body.proceso,
+        storage_bin: req.body.storage_bin,
+        request_id: req.body.request_id,
+        area: req.body.area
+    }
+
+    axios({
+        method: 'post',
+        url: `http://${process.env.API_ADDRESS}:5000/transferSEM_FIFO`,
+        headers: { 'Content-Type': 'application/json' },
+        data: send
+    })
+        .then(result => { res.json(result.data) })
+        .catch(err => { res.json(JSON.stringify(err)) })
+}
+
 controller.transferSEM_Confirmed = (req, res) => {
     let estacion = req.res.locals.macIP.mac
     let serial = req.body.serial

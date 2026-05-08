@@ -1,0 +1,201 @@
+<%- include ("./static/header") %>
+<%- include ("./static/sidebar") %>
+<%- include ("./static/navbar") %>
+
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/mainMenu" class="text-info"><span class="fas fa-arrow-circle-left text-info"></span> Menu</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Transferencia SEM FIFO (Subensamble)</li>
+  </ol>
+</nav>
+
+
+<div class="col-lg-12 frame">
+
+  <div class="row">
+    <div class="col-lg-3"></div>
+
+    <div class="col-lg-6 d-none d-md-block">
+      <div class="card">
+        <div class="card-header"><strong>Datos de Usuario</strong></div>
+        <div class="card-body">
+          <table class="table table-sm borderless">
+            <tbody>
+              <tr>
+                <td><small><strong>ID:</strong></small></td>
+                <td><small id="user_id"><%= user_id %></small></td>
+              </tr>
+              <tr>
+                <td><small><strong>Nombre:</strong></small></td>
+                <td><small id="user_name"><%= user_name %></small></td>
+              </tr>
+              <tr>
+                <td><small><strong>Dispositivo:</strong></small></td>
+                <td><small id="estacion"><%= estacion %></small></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3"></div>
+  </div>
+
+  <div class="row mt-3">
+    <div class="col-lg-3"></div>
+    <div class="col-lg-6 text-center">
+      <h5 class="animate__animated animate__bounceIn">
+        <span class="fas fa-exchange-alt text-info mr-2"></span>Transferencias FIFO — Subensamble
+      </h5>
+      <p class="text-muted small mb-0"><span class="fas fa-circle text-success" style="font-size:0.45rem;vertical-align:0.2em;"></span> Transferencia ya registrada en SAP</p>
+
+      <button id="btn_refresh" class="btn btn-outline-info btn-block mt-3 mb-4">
+        <span class="fas fa-sync-alt mr-1"></span> Actualizar
+      </button>
+
+      <div id="spinnerContainer" class="my-4">
+        <div class="spinner-border text-info" role="status">
+          <span class="sr-only">Cargando...</span>
+        </div>
+        <p class="text-muted mt-2"><small>Cargando solicitudes...</small></p>
+      </div>
+
+      <div id="emptyMessage" class="alert alert-secondary my-4" style="display:none;">
+        <span class="fas fa-inbox mr-2"></span>No hay solicitudes de transferencia pendientes (área Subensamble).
+      </div>
+
+      <div id="errorMessage" class="alert alert-danger my-4" style="display:none;">
+        <span class="fas fa-exclamation-triangle mr-2"></span><span id="errorText"></span>
+      </div>
+
+      <div id="cardContainer"></div>
+
+    </div>
+    <div class="col-lg-3"></div>
+  </div>
+
+  <br><br>
+</div>
+
+
+<!-- Modal FIFO Table -->
+<div class="modal fade" id="modalFIFO" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <form id="submitScanSU">
+          <h6>Escanear Storage Unit(s):</h6>
+          <h6>Material: <span id="cPartNum" class="badge badge-secondary"></span></h6>
+          <h6>Descripcion: <span id="cPartDesc" class="badge badge-secondary"></span></h6>
+          
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" id="inp_verifyFIFO" autocomplete="off">
+            <div class="input-group-append">
+              <span class="input-group-text">
+                <span id="alerta_scan" class="badge badge-danger fas fa-times animate__animated animate__flipOutX bg-danger"></span>
+              </span>
+            </div>
+          </div>
+        </form>
+        <div class="container table-responsive">
+          <table id="tabla_fifo" class="table table-hover text-center table-bordered table-sm table-striped">
+            <thead class="thead-dark">
+              <tr class="header">
+                <th scope="col">SBin</th>
+                <th scope="col">SUnit</th>
+                <th scope="col">FIFO</th>
+                <th scope="col"><span class="fas fa-box-open"></span></th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger btnRefreshClose" data-dismiss="modal">Cerrar <span class="fas fa-times-circle"></span></button>
+        <button id="btnTransferir" type="button" class="btn btn-primary" disabled>Transferir <span class="fas fa-arrow-circle-right"></span></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Spinner -->
+<div class="modal fade" id="modalSpinner" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h2 class="modal-title"><span class="text-secondary fas fa-stopwatch"></span> Procesando</h2>
+        <div class="spinner-grow spinner-grow-sm text-info mt-4 cdelay-1" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+        <div class="spinner-grow spinner-grow-sm text-primary mt-4 cdelay-2" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+        <div class="spinner-grow spinner-grow-sm text-secondary mt-4 cdelay-3" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Error Simple -->
+<div class="modal fade" id="modalErrorFifo" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title"><span class="fas fa-exclamation-triangle mr-2"></span>Error</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p id="errorFifoText" class="mb-0"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btnRefreshClose" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Error/Resultado -->
+<div class="modal fade" id="modalResult" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header card-mov">
+        <h5 class="card-mov">Resultado: <span class="badge badge-danger" id="cantidadErrores"></span></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-12">
+            <div id="tabla_result_container" class="table-responsive">
+              <table id="tabla_result" class="table table-hover table-sm table-striped text-center">
+                <thead class="thead-dark">
+                  <tr class="header">
+                    <th>SU:</th>
+                    <th>Info:</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-info btnRefreshClose" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<%- include ("./static/footer") %>
+<script type="text/javascript" src="/js/functions/transfer_sem_fifo.js?v=<%= Date.now() %>"></script>
+
+</body>
+
+</html>

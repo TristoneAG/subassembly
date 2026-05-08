@@ -21,6 +21,10 @@ router.post("/getUbicacionesSEMMaterial",middleware.verifyToken, middleware.macF
 router.post("/getUbicacionesSEMMandrel",middleware.verifyToken, middleware.macFromIP, routesController.getUbicacionesSEMMandrel_POST);
 router.post("/getUbicacionesSEMSerial",middleware.verifyToken, middleware.macFromIP, routesController.getUbicacionesSEMSerial_POST);
 router.get('/transferSEM',middleware.verifyToken, middleware.macFromIP, routesController.transferSEM_GET);
+router.get('/transferSEMFifo',middleware.verifyToken, middleware.macFromIP, routesController.transferSEMFifo_GET);
+router.post('/getTransferFifoList',middleware.verifyToken, middleware.macFromIP, routesController.getTransferFifoList_POST);
+router.post('/getSEMFIFO',middleware.verifyToken, middleware.macFromIP, routesController.getSEMFIFO_POST);
+router.post('/transferSEM_FIFO',middleware.verifyToken, middleware.macFromIP, routesController.transferSEM_FIFO_POST);
 router.post('/transferSEM_Confirmed',middleware.verifyToken, middleware.macFromIP, routesController.transferSEM_Confirmed);
 router.get('/auditoriaProduccionSEM', middleware.verifyToken, middleware.macFromIP, routesController.auditoriaProduccion_GET);
 router.post('/auditoriaSEM',middleware.verifyToken, middleware.macFromIP, routesController.auditoriaSEM_POST);

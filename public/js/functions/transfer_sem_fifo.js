@@ -73,15 +73,6 @@ function loadTransferList() {
             return
         }
 
-        data = data.filter((item) => {
-            const m = (item.sapMaterial || "").trim().toUpperCase()
-            return m.startsWith("5S") && !m.startsWith("5STP")
-        })
-        if (data.length === 0) {
-            emptyMessage.style.display = ""
-            return
-        }
-
         data.sort((a, b) => new Date(a.requestTime) - new Date(b.requestTime))
 
         let groups = {}

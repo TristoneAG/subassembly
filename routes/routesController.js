@@ -82,7 +82,9 @@ function cookieSet(req, res, result) {
         {
             maxAge: time,
             httpOnly: false,
-            secure: process.env.NODE_ENV === 'production' ? true : false
+            secure: false,
+            sameSite: 'lax',
+            path: '/'
         })
     res.json(result)
 

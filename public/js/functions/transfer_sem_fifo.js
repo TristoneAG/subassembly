@@ -139,7 +139,7 @@ function adjustToMexicoTime(isoString) {
     return date.getTime() + (6 * 60 * 60 * 1000)
 }
 
-const EXCLUDED_STORAGE_BINS = ["CICLI", "JR", "V11"]
+const EXCLUDED_STORAGE_BINS = ["CICLI", "JR", "V11", "MIDEN"]
 
 function isExcludedStorageBin(location) {
     const upper = (location || "").trim().toUpperCase()
